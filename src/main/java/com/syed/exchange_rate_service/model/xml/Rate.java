@@ -14,15 +14,8 @@ public class Rate {
         return currency;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
     public double getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
-    }
 }

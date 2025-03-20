@@ -10,8 +10,4 @@ public class ExchangeRate {
     public DailyRate getDailyRate() {
         return dailyRate;
     }
-
-    public void setDailyRate(DailyRate dailyRate) {
-        this.dailyRate = dailyRate;
-    }
 }

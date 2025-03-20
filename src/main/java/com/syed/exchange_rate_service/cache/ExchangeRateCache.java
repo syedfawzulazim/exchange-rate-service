@@ -12,6 +12,8 @@ public class ExchangeRateCache {
 
     public void updateRates(Map<String, Double> rates) {
         this.exchangeRates.clear();
+        // add EURO
+        rates.put("EUR", 1.0);
         this.exchangeRates.putAll(rates);
     }
 

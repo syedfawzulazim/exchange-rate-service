@@ -2,6 +2,8 @@ package com.syed.exchange_rate_service.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.syed.exchange_rate_service.cache.ExchangeRateCache;
+import com.syed.exchange_rate_service.db.CurrencyRequestCount;
+import com.syed.exchange_rate_service.dto.CurrencyConversionResponse;
 import com.syed.exchange_rate_service.dto.CurrencyPairResponse;
 import com.syed.exchange_rate_service.dto.ExchangeRateResponse;
 import com.syed.exchange_rate_service.model.ExchangeRate;
@@ -22,17 +24,24 @@ public class ExchangeRateService {
     private final RestClient restClient;
     private final XmlMapper xmlMapper;
     private final ExchangeRateCache exchangeRateCache;
+    private final CurrencyRequestCount currencyRequestCount;
 
     private static final String BASE_CURRENCY = "EUR";
     private static final String ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
-    public ExchangeRateService(RestClient.Builder restClientBuilder, XmlMapper xmlMapper, ExchangeRateCache exchangeRateCache ) {
+    public ExchangeRateService(
+            RestClient.Builder restClientBuilder,
+            XmlMapper xmlMapper,
+            ExchangeRateCache exchangeRateCache,
+            CurrencyRequestCount currencyRequestCount
+    ) {
         this.restClient = restClientBuilder.baseUrl(ECB_URL).build();
         this.xmlMapper = xmlMapper;
         this.exchangeRateCache = exchangeRateCache;
+        this.currencyRequestCount = currencyRequestCount;
     }
 
-    public ExchangeRateResponse getExchangeRates() {
+    public ExchangeRateResponse fetchExchangeRates() {
         String xmlResponse = restClient.get()
                 .retrieve()
                 .body(String.class);
@@ -55,37 +64,59 @@ public class ExchangeRateService {
         }
     }
 
-    public ExchangeRate getDailyExchangeRatesAsJson() {
-        if (exchangeRateCache.isEmpty()) {
-            getExchangeRates();
-        }
-        return  new ExchangeRate(exchangeRateCache.getRates());
+    public CurrencyPairResponse getExchangeRateForCurrencyPair(String fromCurrency, String toCurrency) {
+        double rate = getExchangeRate(fromCurrency, toCurrency);
+
+        currencyRequestCount.incrementRequestCount(fromCurrency, toCurrency);
+
+        return new CurrencyPairResponse(fromCurrency, toCurrency, rate);
     }
 
-    public CurrencyPairResponse getExchangeRateForCurrency(String toCurrency, String fromCurrency) {
-        ExchangeRate exchangeRates =  getDailyExchangeRatesAsJson();
+    public Map<String, Integer> getSupporterCurrencyCount(){
+        return currencyRequestCount.getCurrencyRequestCount();
+    }
 
-        if(!exchangeRates.containsCurrency(toCurrency) && !BASE_CURRENCY.equals(toCurrency) ) {
-            throw new IllegalArgumentException("Unsupported currency: " + toCurrency);
+    public CurrencyConversionResponse convertCurrency(double amount, String fromCurrency, String toCurrency){
+        if(amount < 0){
+            throw new IllegalArgumentException("Amount can not be negative: " +amount);
+        }
+
+        double rate = getExchangeRate(fromCurrency, toCurrency);
+
+        double convertedAmount = amount * rate;
+        double roundedAmount = BigDecimal.valueOf(convertedAmount).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+
+        return new CurrencyConversionResponse(fromCurrency, toCurrency, rate, amount, roundedAmount);
+
+    }
+
+    private double getExchangeRate(String fromCurrency, String toCurrency){
+        ExchangeRate exchangeRates =  getDailyExchangeRates();
+
+        if (toCurrency.equals(fromCurrency)){
+            throw new IllegalArgumentException("Can not convert same currency: " + toCurrency);
+        }
+
+        if((!exchangeRates.containsCurrency(toCurrency) || !exchangeRates.containsCurrency(fromCurrency))) {
+            throw new IllegalArgumentException("Unsupported currency: " + toCurrency +" / "+ fromCurrency );
         }
 
         if(fromCurrency.equals(BASE_CURRENCY)) {
-            return new CurrencyPairResponse(fromCurrency, toCurrency, exchangeRates.getRate(toCurrency));
+            return exchangeRates.getRate(toCurrency);
         }
 
-        Double euroToFromCurrency = exchangeRates.getRate(fromCurrency);
-        Double euroToToCurrency = BASE_CURRENCY.equals(toCurrency) ? 1.0 :exchangeRates.getRate(toCurrency);
-
-        System.out.println(euroToFromCurrency);
-        System.out.println(euroToToCurrency);
-
-        if(euroToFromCurrency == null){
-            throw new IllegalArgumentException("Unsupported currency 2: " + fromCurrency);
-        }
-
+        double euroToFromCurrency = exchangeRates.getRate(fromCurrency);
+        double euroToToCurrency = exchangeRates.getRate(toCurrency);
         double rate = euroToToCurrency / euroToFromCurrency;
-        double roundedRate = BigDecimal.valueOf(rate).setScale(4, RoundingMode.HALF_UP).doubleValue();
 
-        return new CurrencyPairResponse(fromCurrency, toCurrency, roundedRate);
+        return BigDecimal.valueOf(rate).setScale(4, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private ExchangeRate getDailyExchangeRates() {
+        if (exchangeRateCache.isEmpty()) {
+            fetchExchangeRates();
+        }
+        return  new ExchangeRate(exchangeRateCache.getRates());
     }
 }

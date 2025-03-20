@@ -1,12 +1,14 @@
 package com.syed.exchange_rate_service.controller;
 
+import com.syed.exchange_rate_service.dto.CurrencyConversionResponse;
 import com.syed.exchange_rate_service.dto.CurrencyPairResponse;
 import com.syed.exchange_rate_service.dto.ExchangeRateResponse;
 import com.syed.exchange_rate_service.service.ExchangeRateService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-//@RequiredArgsConstructor
 @RequestMapping("/api/exchange")
 public class ExchangeRateController {
 
@@ -18,14 +20,33 @@ public class ExchangeRateController {
 
     @GetMapping("/rates")
     public ExchangeRateResponse getAllExchangeRates() {
-       return exchangeRateService.getExchangeRates();
+       return exchangeRateService.fetchExchangeRates();
     }
 
     @GetMapping("/rates/pair")
     public CurrencyPairResponse getRateForCurrencyPair(
-            @RequestParam String toCurrency,
-            @RequestParam String fromCurrency) {
-        return exchangeRateService.getExchangeRateForCurrency(toCurrency.toUpperCase(), fromCurrency.toUpperCase());
+            @RequestParam String fromCurrency,
+            @RequestParam String toCurrency ) {
+        return exchangeRateService.getExchangeRateForCurrencyPair(
+                fromCurrency.toUpperCase(),
+                toCurrency.toUpperCase()
+        );
     }
 
+    @GetMapping("/convert")
+    public CurrencyConversionResponse getCurrencyConversion(
+            @RequestParam double amount,
+            @RequestParam String fromCurrency,
+            @RequestParam String toCurrency ){
+        return exchangeRateService.convertCurrency(
+                amount,
+                fromCurrency.toUpperCase(),
+                toCurrency.toUpperCase()
+        );
+    }
+
+    @GetMapping("/currency-request-count")
+    public Map<String, Integer> getSupportedCurrencyRequestCount() {
+        return exchangeRateService.getSupporterCurrencyCount();
+    }
 }

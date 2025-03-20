@@ -13,7 +13,7 @@ public class ExchangeRate {
         return rates;
     }
 
-    public Double getRate(String currency) {
+    public double getRate(String currency) {
         return rates.get(currency);
     }
 
