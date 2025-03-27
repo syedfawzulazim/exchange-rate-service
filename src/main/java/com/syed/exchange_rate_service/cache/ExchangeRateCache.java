@@ -8,21 +8,17 @@ import java.util.Map;
 @Component
 public class ExchangeRateCache {
 
-    private Map<String, Double> exchangeRates = new HashMap<>();
+    private final Map<String, Double> exchangeRates = new HashMap<>();
 
     public void updateRates(Map<String, Double> rates) {
         this.exchangeRates.clear();
-        // add EURO
+        // adds EURO
         rates.put("EUR", 1.0);
         this.exchangeRates.putAll(rates);
     }
 
     public Map<String, Double> getRates() {
         return new HashMap<>(exchangeRates);
-    }
-
-    public Double getRate(String currency) {
-        return exchangeRates.get(currency.toUpperCase());
     }
 
     public boolean isEmpty() {

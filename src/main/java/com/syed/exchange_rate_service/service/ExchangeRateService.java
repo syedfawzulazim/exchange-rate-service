@@ -2,6 +2,7 @@ package com.syed.exchange_rate_service.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.syed.exchange_rate_service.cache.ExchangeRateCache;
+import com.syed.exchange_rate_service.config.AppProperties;
 import com.syed.exchange_rate_service.db.CurrencyRequestCount;
 import com.syed.exchange_rate_service.dto.CurrencyConversionResponse;
 import com.syed.exchange_rate_service.dto.CurrencyPairResponse;
@@ -25,20 +26,21 @@ public class ExchangeRateService {
     private final XmlMapper xmlMapper;
     private final ExchangeRateCache exchangeRateCache;
     private final CurrencyRequestCount currencyRequestCount;
-
-    private static final String BASE_CURRENCY = "EUR";
-    private static final String ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+    private final String BASE_CURRENCY;
 
     public ExchangeRateService(
             RestClient.Builder restClientBuilder,
             XmlMapper xmlMapper,
             ExchangeRateCache exchangeRateCache,
-            CurrencyRequestCount currencyRequestCount
+            CurrencyRequestCount currencyRequestCount,
+            AppProperties appProperties
     ) {
-        this.restClient = restClientBuilder.baseUrl(ECB_URL).build();
+
+        this.restClient = restClientBuilder.baseUrl(appProperties.getUrl()).build();
         this.xmlMapper = xmlMapper;
         this.exchangeRateCache = exchangeRateCache;
         this.currencyRequestCount = currencyRequestCount;
+        this.BASE_CURRENCY = appProperties.getBaseCurrency();
     }
 
     public ExchangeRateResponse fetchExchangeRates() {
