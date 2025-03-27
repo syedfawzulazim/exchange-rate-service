@@ -1,8 +1,8 @@
 package com.syed.exchange_rate_service.controller;
 
-import com.syed.exchange_rate_service.dto.CurrencyConversionResponse;
-import com.syed.exchange_rate_service.dto.CurrencyPairResponse;
-import com.syed.exchange_rate_service.dto.ExchangeRateResponse;
+import com.syed.exchange_rate_service.dtos.CurrencyConversionResponse;
+import com.syed.exchange_rate_service.dtos.CurrencyPairResponse;
+import com.syed.exchange_rate_service.dtos.ExchangeRateResponse;
 import com.syed.exchange_rate_service.service.ExchangeRateService;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

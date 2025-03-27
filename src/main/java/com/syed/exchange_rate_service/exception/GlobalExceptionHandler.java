@@ -1,6 +1,6 @@
 package com.syed.exchange_rate_service.exception;
 
-import com.syed.exchange_rate_service.dto.ErrorResponse;
+import com.syed.exchange_rate_service.dtos.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

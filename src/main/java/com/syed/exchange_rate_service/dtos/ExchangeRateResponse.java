@@ -1,4 +1,4 @@
-package com.syed.exchange_rate_service.dto;
+package com.syed.exchange_rate_service.dtos;
 
 import java.util.Map;
 

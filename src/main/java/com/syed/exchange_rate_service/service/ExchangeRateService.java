@@ -4,9 +4,10 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.syed.exchange_rate_service.cache.ExchangeRateCache;
 import com.syed.exchange_rate_service.config.AppProperties;
 import com.syed.exchange_rate_service.db.CurrencyRequestCount;
-import com.syed.exchange_rate_service.dto.CurrencyConversionResponse;
-import com.syed.exchange_rate_service.dto.CurrencyPairResponse;
-import com.syed.exchange_rate_service.dto.ExchangeRateResponse;
+import com.syed.exchange_rate_service.dtos.CurrencyConversionResponse;
+import com.syed.exchange_rate_service.dtos.CurrencyPairResponse;
+import com.syed.exchange_rate_service.dtos.ExchangeRateResponse;
+import com.syed.exchange_rate_service.interfaces.ExchangeRepository;
 import com.syed.exchange_rate_service.model.ExchangeRate;
 import com.syed.exchange_rate_service.model.xml.Envelope;
 import com.syed.exchange_rate_service.model.xml.Rate;
@@ -25,7 +26,7 @@ public class ExchangeRateService {
     private final RestClient restClient;
     private final XmlMapper xmlMapper;
     private final ExchangeRateCache exchangeRateCache;
-    private final CurrencyRequestCount currencyRequestCount;
+    private final ExchangeRepository exchangeRepository;
     private final String BASE_CURRENCY;
 
     public ExchangeRateService(
@@ -33,13 +34,13 @@ public class ExchangeRateService {
             XmlMapper xmlMapper,
             ExchangeRateCache exchangeRateCache,
             CurrencyRequestCount currencyRequestCount,
-            AppProperties appProperties
+            AppProperties appProperties,
+            ExchangeRepository exchangeRepository
     ) {
-
         this.restClient = restClientBuilder.baseUrl(appProperties.getUrl()).build();
         this.xmlMapper = xmlMapper;
         this.exchangeRateCache = exchangeRateCache;
-        this.currencyRequestCount = currencyRequestCount;
+        this.exchangeRepository = exchangeRepository;
         this.BASE_CURRENCY = appProperties.getBaseCurrency();
     }
 
@@ -69,13 +70,13 @@ public class ExchangeRateService {
     public CurrencyPairResponse getExchangeRateForCurrencyPair(String fromCurrency, String toCurrency) {
         double rate = getExchangeRate(fromCurrency, toCurrency);
 
-        currencyRequestCount.incrementRequestCount(fromCurrency, toCurrency);
+        exchangeRepository.incrementRequestCount(fromCurrency, toCurrency);
 
         return new CurrencyPairResponse(fromCurrency, toCurrency, rate);
     }
 
     public Map<String, Integer> getSupporterCurrencyCount(){
-        return currencyRequestCount.getCurrencyRequestCount();
+        return exchangeRepository.getCurrencyRequestCount();
     }
 
     public CurrencyConversionResponse convertCurrency(double amount, String fromCurrency, String toCurrency){
