@@ -1,6 +1,5 @@
-package com.syed.exchange_rate_service.cahce;
+package com.syed.exchange_rate_service.cache;
 
-import com.syed.exchange_rate_service.cache.ExchangeRateCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

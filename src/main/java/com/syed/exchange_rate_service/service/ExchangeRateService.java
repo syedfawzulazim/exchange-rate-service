@@ -1,5 +1,6 @@
 package com.syed.exchange_rate_service.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.syed.exchange_rate_service.cache.ExchangeRateCache;
 import com.syed.exchange_rate_service.client.ExchangeRateApiClient;
