@@ -14,19 +14,18 @@ public class DailyRate {
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<Rate> rates;
 
+    public DailyRate(){}
+
+    public DailyRate(String time, List<Rate> rates) {
+        this.time = time;
+        this.rates = rates;
+    }
+
     public String getTime() {
         return time;
     }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public List<Rate> getRates() {
         return rates;
-    }
-
-    public void setRates(List<Rate> rates) {
-        this.rates = rates;
     }
 }

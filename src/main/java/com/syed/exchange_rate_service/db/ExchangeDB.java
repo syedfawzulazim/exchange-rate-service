@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class CurrencyRequestCount {
+public class ExchangeDB {
     private final Map<String, Integer> currencyRequestCount = new ConcurrentHashMap<>();
 
     public Map<String, Integer> getCurrencyRequestCount() {

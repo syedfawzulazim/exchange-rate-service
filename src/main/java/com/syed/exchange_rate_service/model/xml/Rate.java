@@ -10,6 +10,13 @@ public class Rate {
     @JacksonXmlProperty(isAttribute = true)
     private double rate;
 
+    public Rate() {}
+
+    public Rate(String currency, double rate) {
+        this.currency = currency;
+        this.rate = rate;
+    }
+
     public String getCurrency() {
         return currency;
     }
@@ -17,5 +24,4 @@ public class Rate {
     public double getRate() {
         return rate;
     }
-
 }

@@ -1,6 +1,6 @@
 package com.syed.exchange_rate_service.repository;
 
-import com.syed.exchange_rate_service.db.CurrencyRequestCount;
+import com.syed.exchange_rate_service.db.ExchangeDB;
 import com.syed.exchange_rate_service.interfaces.ExchangeRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,19 +9,19 @@ import java.util.Map;
 @Repository
 public class InMemoryExchangeRepository implements ExchangeRepository {
 
-    private final CurrencyRequestCount currencyRequestCount;
+    private final ExchangeDB db;
 
-    public InMemoryExchangeRepository(CurrencyRequestCount currencyRequestCount) {
-        this.currencyRequestCount = currencyRequestCount;
+    public InMemoryExchangeRepository(ExchangeDB db) {
+        this.db = db;
     }
 
     @Override
     public void incrementRequestCount(String... currencies) {
-        currencyRequestCount.incrementRequestCount(currencies);
+        db.incrementRequestCount(currencies);
     }
 
     @Override
     public Map<String, Integer> getCurrencyRequestCount() {
-        return currencyRequestCount.getCurrencyRequestCount();
+        return db.getCurrencyRequestCount();
     }
 }

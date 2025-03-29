@@ -2,8 +2,8 @@ package com.syed.exchange_rate_service.service;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.syed.exchange_rate_service.cache.ExchangeRateCache;
+import com.syed.exchange_rate_service.client.ExchangeRateApiClient;
 import com.syed.exchange_rate_service.config.AppProperties;
-import com.syed.exchange_rate_service.db.CurrencyRequestCount;
 import com.syed.exchange_rate_service.dtos.CurrencyConversionResponse;
 import com.syed.exchange_rate_service.dtos.CurrencyPairResponse;
 import com.syed.exchange_rate_service.dtos.ExchangeRateResponse;
@@ -12,7 +12,6 @@ import com.syed.exchange_rate_service.model.ExchangeRate;
 import com.syed.exchange_rate_service.model.xml.Envelope;
 import com.syed.exchange_rate_service.model.xml.Rate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,34 +22,31 @@ import java.math.RoundingMode;
 @Service
 public class ExchangeRateService {
 
-    private final RestClient restClient;
     private final XmlMapper xmlMapper;
     private final ExchangeRateCache exchangeRateCache;
     private final ExchangeRepository exchangeRepository;
+    private final ExchangeRateApiClient apiClient;
     private final String BASE_CURRENCY;
 
     public ExchangeRateService(
-            RestClient.Builder restClientBuilder,
             XmlMapper xmlMapper,
             ExchangeRateCache exchangeRateCache,
-            CurrencyRequestCount currencyRequestCount,
-            AppProperties appProperties,
-            ExchangeRepository exchangeRepository
+            ExchangeRepository exchangeRepository,
+            ExchangeRateApiClient apiClient,
+            AppProperties appProperties
     ) {
-        this.restClient = restClientBuilder.baseUrl(appProperties.getUrl()).build();
         this.xmlMapper = xmlMapper;
         this.exchangeRateCache = exchangeRateCache;
         this.exchangeRepository = exchangeRepository;
+        this.apiClient = apiClient;
         this.BASE_CURRENCY = appProperties.getBaseCurrency();
     }
 
     public ExchangeRateResponse fetchExchangeRates() {
-        String xmlResponse = restClient.get()
-                .retrieve()
-                .body(String.class);
+        String xmlResponse = apiClient.fetchExchangeRates();
 
         try {
-            Envelope envelope =  xmlMapper.readValue(xmlResponse, Envelope.class);
+            Envelope envelope = xmlMapper.readValue(xmlResponse, Envelope.class);
 
             Map<String, Double> ratesMap = new HashMap<>();
             for (Rate rate : envelope.getExchangeRate().getDailyRate().getRates()) {

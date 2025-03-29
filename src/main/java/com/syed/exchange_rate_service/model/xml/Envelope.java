@@ -11,12 +11,13 @@ public class Envelope {
     @JacksonXmlProperty(localName = "Cube")
     private ExchangeRate exchangeRate;
 
+    public Envelope(){}
+
+    public Envelope(ExchangeRate exchangeRate){
+        this.exchangeRate = exchangeRate;
+    }
 
     public ExchangeRate getExchangeRate() {
         return exchangeRate;
-    }
-
-    public void setExchangeRate(ExchangeRate exchangeRate) {
-        this.exchangeRate = exchangeRate;
     }
 }

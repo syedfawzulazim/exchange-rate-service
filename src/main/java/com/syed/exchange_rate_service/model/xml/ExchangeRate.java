@@ -7,6 +7,12 @@ public class ExchangeRate {
     @JacksonXmlProperty(localName = "Cube")
     private DailyRate dailyRate;
 
+    public ExchangeRate() {}
+
+    public ExchangeRate(DailyRate dailyRate){
+        this.dailyRate = dailyRate;
+    }
+
     public DailyRate getDailyRate() {
         return dailyRate;
     }
