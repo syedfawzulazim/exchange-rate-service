@@ -57,6 +57,6 @@ public class ExchangeRateController {
 
     @GetMapping("/currency-request-count")
     public Map<String, Integer> getSupportedCurrencyRequestCount() {
-        return exchangeRateService.getSupporterCurrencyCount();
+        return exchangeRateService.getSupportedCurrencyCount();
     }
 }

@@ -137,7 +137,7 @@ public class ExchangeRateServiceTest {
         assertEquals("USD", response.toCurrency());
         assertEquals(1.2, response.rate(), 0.0001);
         assertEquals(100.0, response.originalAmount(), 0.0001);
-        assertEquals(120.0, response.converterAmount(), 0.0001);
+        assertEquals(120.0, response.convertedAmount(), 0.0001);
     }
 
     @Test

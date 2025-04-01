@@ -5,5 +5,5 @@ public record CurrencyConversionResponse(
         String toCurrency,
         double rate,
         double originalAmount,
-        double converterAmount) {
+        double convertedAmount) {
 }

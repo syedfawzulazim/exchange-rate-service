@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Cube>
     <Cube time="2025-03-28">
-        <Cube currency="USD" rate="1.0797"/>
-        <Cube currency="JPY" rate="162.64"/>
+        <Cube currency="USD" rate="1.0731"/>
+        <Cube currency="JPY" rate="140.85"/>
+        <Cube currency="GBP" rate="0.86158"/>
+        <Cube currency="EUR" rate="1.0"/>
     </Cube>
 </Cube>
