@@ -11,6 +11,8 @@ import com.syed.exchange_rate_service.interfaces.ExchangeRepository;
 import com.syed.exchange_rate_service.model.ExchangeRate;
 import com.syed.exchange_rate_service.model.xml.Envelope;
 import com.syed.exchange_rate_service.model.xml.Rate;
+import jakarta.annotation.PostConstruct;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,9 +20,13 @@ import java.util.Map;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Service
 public class ExchangeRateService {
+    private static final Logger logger = LoggerFactory.getLogger(ExchangeRateService.class);
 
     private final XmlMapper xmlMapper;
     private final ExchangeRateCache exchangeRateCache;
@@ -42,6 +48,13 @@ public class ExchangeRateService {
         this.BASE_CURRENCY = appProperties.getBaseCurrency();
     }
 
+    @PostConstruct
+    public void initializeExchangeRates(){
+        logger.info("initializing exchange rates at application startup...");
+        fetchExchangeRates();
+    }
+
+    @Scheduled(fixedRateString = "${app.update.interval}")
     public ExchangeRateResponse fetchExchangeRates() {
         String xmlResponse = apiClient.fetchExchangeRates();
 
@@ -52,7 +65,9 @@ public class ExchangeRateService {
             for (Rate rate : envelope.getExchangeRate().getDailyRate().getRates()) {
                 ratesMap.put(rate.getCurrency(), rate.getRate());
             }
+
             exchangeRateCache.updateRates(ratesMap);
+            logger.info("Exchange cache updated...");
 
             return new ExchangeRateResponse(
                     envelope.getExchangeRate().getDailyRate().getTime(),
@@ -114,6 +129,7 @@ public class ExchangeRateService {
 
     private ExchangeRate getDailyExchangeRates() {
         if (exchangeRateCache.isEmpty()) {
+            logger.info("Cache is empty fetching data from external call.");
             fetchExchangeRates();
         }
         return  new ExchangeRate(exchangeRateCache.getRates());
