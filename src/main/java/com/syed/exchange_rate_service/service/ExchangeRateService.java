@@ -7,7 +7,8 @@ import com.syed.exchange_rate_service.config.AppProperties;
 import com.syed.exchange_rate_service.dtos.CurrencyConversionResponse;
 import com.syed.exchange_rate_service.dtos.CurrencyPairResponse;
 import com.syed.exchange_rate_service.dtos.ExchangeRateResponse;
-import com.syed.exchange_rate_service.interfaces.ExchangeRepository;
+import com.syed.exchange_rate_service.interfaces.IExchangeRateService;
+import com.syed.exchange_rate_service.interfaces.IExchangeRepository;
 import com.syed.exchange_rate_service.model.ExchangeRate;
 import com.syed.exchange_rate_service.model.xml.Envelope;
 import com.syed.exchange_rate_service.model.xml.Rate;
@@ -25,19 +26,19 @@ import org.slf4j.LoggerFactory;
 
 
 @Service
-public class ExchangeRateService {
+public class ExchangeRateService implements IExchangeRateService {
     private static final Logger logger = LoggerFactory.getLogger(ExchangeRateService.class);
 
     private final XmlMapper xmlMapper;
     private final ExchangeRateCache exchangeRateCache;
-    private final ExchangeRepository exchangeRepository;
+    private final IExchangeRepository exchangeRepository;
     private final ExchangeRateApiClient apiClient;
     private final String BASE_CURRENCY;
 
     public ExchangeRateService(
             XmlMapper xmlMapper,
             ExchangeRateCache exchangeRateCache,
-            ExchangeRepository exchangeRepository,
+            IExchangeRepository exchangeRepository,
             ExchangeRateApiClient apiClient,
             AppProperties appProperties
     ) {

@@ -14,8 +14,8 @@ public class ExchangeRateApiClient {
 
     private final RestClient restClient;
 
-    public ExchangeRateApiClient(RestClient.Builder restClientBuilder, AppProperties appProperties){
-        this.restClient = restClientBuilder.baseUrl(appProperties.getUrl()).build();
+    public ExchangeRateApiClient(AppProperties appProperties){
+        this.restClient = RestClient.builder().baseUrl(appProperties.getUrl()).build();
     }
 
     public String fetchExchangeRates(){

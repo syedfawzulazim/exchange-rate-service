@@ -3,7 +3,7 @@ package com.syed.exchange_rate_service.controller;
 import com.syed.exchange_rate_service.dtos.CurrencyConversionResponse;
 import com.syed.exchange_rate_service.dtos.CurrencyPairResponse;
 import com.syed.exchange_rate_service.dtos.ExchangeRateResponse;
-import com.syed.exchange_rate_service.service.ExchangeRateService;
+import com.syed.exchange_rate_service.interfaces.IExchangeRateService;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -17,9 +17,9 @@ import java.util.Map;
 @Validated
 public class ExchangeRateController {
 
-    private final ExchangeRateService exchangeRateService;
+    private final IExchangeRateService exchangeRateService;
 
-    public ExchangeRateController(ExchangeRateService exchangeRateService) {
+    public ExchangeRateController(IExchangeRateService exchangeRateService) {
         this.exchangeRateService = exchangeRateService;
     }
 

@@ -7,7 +7,7 @@ import com.syed.exchange_rate_service.config.AppProperties;
 import com.syed.exchange_rate_service.dtos.CurrencyConversionResponse;
 import com.syed.exchange_rate_service.dtos.CurrencyPairResponse;
 import com.syed.exchange_rate_service.dtos.ExchangeRateResponse;
-import com.syed.exchange_rate_service.interfaces.ExchangeRepository;
+import com.syed.exchange_rate_service.interfaces.IExchangeRepository;
 
 import com.syed.exchange_rate_service.model.xml.DailyRate;
 import com.syed.exchange_rate_service.model.xml.Envelope;
@@ -36,7 +36,7 @@ public class ExchangeRateServiceTest {
     private ExchangeRateCache exchangeRateCache;
 
     @Mock
-    private ExchangeRepository exchangeRepository;
+    private IExchangeRepository exchangeRepository;
 
     @Mock
     private ExchangeRateApiClient apiClient;
